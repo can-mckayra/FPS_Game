@@ -12,13 +12,9 @@ public class GroundCheck : MonoBehaviour
         playerController = transform.parent.GetComponent<PlayerController>();
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (!(playerController.GetIsGrounded()))
-        {
-            playerController.SetIsGrounded(true);
-        }
-        //Debug.Log("Colliding!");
+        playerController.SetIsGrounded(true);
     }
 
     private void OnTriggerExit(Collider other)
