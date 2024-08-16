@@ -23,7 +23,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private int jumpCredit;
     [SerializeField] private int jumpCreditMax = 2;
-    //[SerializeField] private bool jump = false;
 
     [SerializeField] private float jumpForce = 1.0f;
 
@@ -39,18 +38,55 @@ public class PlayerController : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         playerCamera = GetComponentInChildren<Camera>();
+
+        jumpCredit = jumpCreditMax;
     }
 
     void Update()
     {
-        HandleLooking();
+        HandleInputMovement();
+        HandleJumping();
+        HandleCamera();
 
+        Debug.Log(transform.rotation.eulerAngles);
+    }
+
+
+    private void FixedUpdate()
+    {
+        HandleMovement();
+    }
+
+    private void LateUpdate()
+    {
+        //HandleCamera();
+    }
+
+    private void HandleInputMovement()
+    {
         inputZ = Input.GetAxis("Vertical");
         inputX = Input.GetAxis("Horizontal");
+    }
 
+    private void HandleMovement()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && inputZ > 0)
+        {
+            move = ((inputX * speedSprint * transform.right) + (new Vector3(0.0f, rb.velocity.y, 0.0f)) + (inputZ * speedSprint * transform.forward));
+            rb.velocity = move;
+        }
+        else
+        {
+            move = ((inputX * speed * transform.right) + (new Vector3(0.0f, rb.velocity.y, 0.0f)) + (inputZ * speed * transform.forward));
+            rb.velocity = move;
+        }
+    }
+
+    private void HandleJumping()
+    {
         if (Input.GetKeyDown(KeyCode.Space) && jumpCredit > 0)
         {
-            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z); // this is better
             //rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             jumpCredit--;
             isGrounded = false;
@@ -60,63 +96,29 @@ public class PlayerController : MonoBehaviour
         {
             jumpCredit = jumpCreditMax;
         }
-
-        Debug.Log(eulerAngles);
     }
 
-    private void FixedUpdate()
+    private void HandleCamera()
     {
-        /*if (Input.GetKey(KeyCode.LeftShift))
-        {
-            move = (transform.right * inputX) + (transform.forward * inputZ);
-            rb.velocity = move * speedSprint;
-        }
-        else
-        {
-            move = (transform.right * inputX) + (transform.forward * inputZ);
-            rb.velocity = move * speed;
-        }*/
 
-        move = ((transform.right * inputX * speed) + (new Vector3(0.0f, rb.velocity.y, 0.0f)) + (transform.forward * inputZ * speed));
-        rb.velocity = move;
+        mouseX = (mouseX + Input.GetAxis("Mouse X") * mouseSensitivity) % 360;
+        mouseY = (mouseY + Input.GetAxis("Mouse Y") * mouseSensitivity) % 360;
+
+        mouseY = Mathf.Clamp(mouseY, -90.0f, 90.0f);
+
+        playerCamera.transform.localRotation = Quaternion.Euler(-mouseY, 0.0f, 0.0f);
+        transform.rotation = Quaternion.Euler(0.0f, mouseX, 0.0f);
+    }
+    
+    public bool IsGrounded
+    {
+        get => isGrounded;
+        set => isGrounded = value;
     }
 
-    private void LateUpdate()
+    public Rigidbody Rb
     {
-        playerCamera.transform.eulerAngles = new Vector3(playerCamera.transform.eulerAngles.x, transform.eulerAngles.y, 0.0f);
-
-        if (rb.velocity.y == 0 && isGrounded != true)
-        {
-            isGrounded = true;
-        }
-    }
-
-    private void HandleLooking()
-    {
-        eulerAngles = playerCamera.transform.eulerAngles;
-        eulerAngles.x = Mathf.Clamp(eulerAngles.x, -90.0f, 90.0f);
-        
-        mouseX = Input.GetAxis("Mouse X");
-        mouseY = Input.GetAxis("Mouse Y");
-
-        playerCamera.transform.Rotate(mouseSensitivity * -mouseY * Vector3.right);
-        transform.Rotate(mouseSensitivity * mouseX * Vector3.up);
-        //playerCamera.transform.eulerAngles = eulerAngles;
-    }
-
-    /*private void HandleMovement()
-    {
-
-    }
-    */
-
-    public bool GetIsGrounded()
-    {
-        return isGrounded;
-    }
-
-    public void SetIsGrounded(bool value)
-    {
-        isGrounded = value;
+        get => rb;
+        private set => rb = value;
     }
 }

@@ -12,13 +12,26 @@ public class GroundCheck : MonoBehaviour
         playerController = transform.parent.GetComponent<PlayerController>();
     }
 
+    private void LateUpdate()
+    {
+        groundCheckRedundancy();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        playerController.SetIsGrounded(true);
+        playerController.IsGrounded = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        playerController.SetIsGrounded(false);
+        playerController.IsGrounded = false;
+    }
+
+    private void groundCheckRedundancy()
+    {
+        if (playerController.Rb.velocity.y == 0 && playerController.IsGrounded != true)
+        {
+            playerController.IsGrounded = true;
+        }
     }
 }
