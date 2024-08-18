@@ -9,7 +9,7 @@ public class GroundCheck : MonoBehaviour
 
     private void Start()
     {
-        playerController = transform.parent.GetComponent<PlayerController>();
+        playerController = transform.parent.GetComponentInChildren<PlayerController>();
     }
 
     private void LateUpdate()

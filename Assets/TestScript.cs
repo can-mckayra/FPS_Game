@@ -31,7 +31,8 @@ public class TestScript : MonoBehaviour
 
     private Vector3 move;
 
-    private Vector3 coords;
+    private Vector3 moveTowardsZ;
+    private Vector3 moveTowardsX;
 
     void Start()
     {
@@ -39,6 +40,8 @@ public class TestScript : MonoBehaviour
         Cursor.visible = false;
 
         rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
+
         playerCamera = GetComponentInChildren<Camera>();
 
         jumpCredit = jumpCreditMax;
@@ -48,10 +51,10 @@ public class TestScript : MonoBehaviour
     {
         HandleInputMovement();
         HandleJumping();
-        HandleCamera();
+        //HandleCamera();
         HandleMovement();
 
-        Debug.Log(Time.deltaTime);
+        Debug.Log(transform.eulerAngles);
         //Debug.Log((transform.eulerAngles.y + " -> " + Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y)));
         //Debug.Log(Mathf.Sin(Mathf.Deg2Rad * 0) + ", " + Mathf.Sin(Mathf.Deg2Rad * 90));
     }
@@ -87,11 +90,10 @@ public class TestScript : MonoBehaviour
         }
         */
 
-        if (Input.GetAxis("Vertical") != 0)
-        {
-            coords = new Vector3(transform.position.x + Input.GetAxisRaw("Vertical") * (Mathf.Sin(Mathf.Deg2Rad * transform.eulerAngles.y)) * Time.deltaTime * speed, transform.position.y, transform.position.z + Input.GetAxisRaw("Vertical") * (Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y)) * Time.deltaTime * speed);
-            rb.MovePosition(coords);
-        }
+        moveTowardsZ = new Vector3(Input.GetAxisRaw("Vertical") * (Mathf.Sin(Mathf.Deg2Rad * transform.eulerAngles.y)), 0.0f, Input.GetAxisRaw("Vertical") * (Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y))).normalized;
+        moveTowardsX = new Vector3(Input.GetAxisRaw("Horizontal") * (Mathf.Sin(Mathf.Deg2Rad * transform.eulerAngles.y + Mathf.PI / 2)), 0.0f, Input.GetAxisRaw("Horizontal") * (Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y + Mathf.PI / 2))).normalized;
+
+        rb.MovePosition(transform.position + ((moveTowardsZ + moveTowardsX)).normalized * speed);
     }
 
     private void HandleJumping()

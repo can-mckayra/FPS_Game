@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
 
         rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
+
         playerCamera = GetComponentInChildren<Camera>();
 
         jumpCredit = jumpCreditMax;
@@ -46,9 +48,9 @@ public class PlayerController : MonoBehaviour
     {
         HandleInputMovement();
         HandleJumping();
-        HandleCamera();
+        //HandleCamera();
 
-        Debug.Log(transform.rotation.eulerAngles);
+        //Debug.Log(transform.rotation.eulerAngles);
     }
 
 
