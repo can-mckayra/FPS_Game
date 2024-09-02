@@ -23,6 +23,8 @@ public class RecallAbility : MonoBehaviour
     private float elapsedTime = 0.0f;
     private float interpolationRatio = 0.0f;
 
+    private float t = 0.0f;
+
     [SerializeField] private Quaternion pastRotation;
     private List<Vector3> positions = new List<Vector3>();
     private List<Quaternion> rotations = new List<Quaternion>();
@@ -59,13 +61,13 @@ public class RecallAbility : MonoBehaviour
             }
         }
 
-        Debug.Log(interpolationRatio);
+        //Debug.Log(Time.fixedDeltaTime / rewindBackSeconds * rewindDuration);
         //Debug.Log($"X: {pastRotation.eulerAngles.x}, Y: {pastRotation.eulerAngles.y}");
     }
 
     private void FixedUpdate()
     {
-        interpolationRatio = Mathf.Clamp01(interpolationRatio);
+        //interpolationRatio = Mathf.Clamp01(interpolationRatio);
 
         if (!isRecalling)
         {
@@ -80,9 +82,9 @@ public class RecallAbility : MonoBehaviour
         }
         if (isRecalling && interpolationRatio <= 1.0f)
         {
-            interpolationRatio += 1.0f / 150.0f;
+            //interpolationRatio += 1.0f / 150.0f;
 
-            transform.rotation = Quaternion.Lerp(transform.rotation, pastRotation, interpolationRatio);
+            //transform.rotation = Quaternion.Lerp(transform.rotation, pastRotation, interpolationRatio);
         }
     }
 
@@ -91,8 +93,9 @@ public class RecallAbility : MonoBehaviour
         if (positions.Count > 0)
         {
             StartCoroutine(RecallCoroutine());
+            //StartCoroutine(RecallRotationCoroutine());
         }
-        rotations.Clear();
+        //rotations.Clear();
 
     }
 
@@ -103,11 +106,15 @@ public class RecallAbility : MonoBehaviour
         lockMovementInput = true;
         lockLookInput = true;
 
-        while (positions.Count > 0)
+        while (rotations.Count > 0)
         {
             transform.position = positions[positions.Count - 1];
             positions.RemoveAt(positions.Count - 1);
-            yield return new WaitForSeconds(Time.fixedDeltaTime / maxPositions / Time.fixedDeltaTime * rewindDuration);
+
+            transform.rotation = rotations[rotations.Count - 1];
+            rotations.RemoveAt(rotations.Count - 1);
+
+            yield return new WaitForSeconds(Time.fixedDeltaTime / rewindBackSeconds * rewindDuration);
         }
 
         isRecalling = false;
@@ -119,6 +126,16 @@ public class RecallAbility : MonoBehaviour
         
         //enableRotationFinilize = true;
     }
+
+    /*private IEnumerator RecallRotationCoroutine()
+    {
+        while (t < 1)
+        {
+            transform.rotation = Quaternion.Lerp(transform.rotation, pastRotation, t);
+
+            t++;
+        }
+    }*/
 
     public bool GetIsRecalling
     {
