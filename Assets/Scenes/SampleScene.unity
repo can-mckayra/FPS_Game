@@ -354,7 +354,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &281145768
 Transform:
   m_ObjectHideFlags: 0
@@ -791,7 +791,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &612545322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1031,9 +1031,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 941170345}
+  - component: {fileID: 941170351}
   - component: {fileID: 941170349}
   - component: {fileID: 941170346}
   - component: {fileID: 941170348}
+  - component: {fileID: 941170352}
   - component: {fileID: 941170347}
   m_Layer: 0
   m_Name: Player
@@ -1159,6 +1161,42 @@ MonoBehaviour:
   speedWalk: 20
   speedSprint: 30
   movementDirection: {x: 0, y: 0, z: 0}
+--- !u!114 &941170351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941170344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41288eee96410094c88af834785fc677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRecalling: 0
+  lockMovementInput: 0
+  lockLookInput: 0
+  rewindBackTo: 3
+  rewindDuration: 1.25
+  cooldown: 1
+  maxPositions: 0
+  nextRecallTime: 0
+  pastRotation: {x: 0, y: 0, z: 0, w: 0}
+  rotations: []
+--- !u!114 &941170352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941170344}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 420987996bea2634c995ea064edd4f15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myRotation: {x: 0, y: 0, z: 0, w: 0}
+  forwardRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

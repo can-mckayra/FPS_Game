@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
+    private RecallAbility recallAbility;
+
     private Rigidbody rb;
     [SerializeField] private Camera playerCamera;
 
@@ -42,6 +44,8 @@ public class TestScript : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
+        recallAbility = GetComponent<RecallAbility>();
+
         playerCamera = GetComponentInChildren<Camera>();
 
         jumpCredit = jumpCreditMax;
@@ -51,10 +55,11 @@ public class TestScript : MonoBehaviour
     {
         HandleInputMovement();
         HandleJumping();
-        //HandleCamera();
+        HandleCamera();
         HandleMovement();
 
-        Debug.Log(transform.eulerAngles);
+        //Debug.Log(mouseX);
+        //Debug.Log(transform.eulerAngles);
         //Debug.Log((transform.eulerAngles.y + " -> " + Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y)));
         //Debug.Log(Mathf.Sin(Mathf.Deg2Rad * 0) + ", " + Mathf.Sin(Mathf.Deg2Rad * 90));
     }
@@ -90,10 +95,13 @@ public class TestScript : MonoBehaviour
         }
         */
 
-        moveTowardsZ = new Vector3(Input.GetAxisRaw("Vertical") * (Mathf.Sin(Mathf.Deg2Rad * transform.eulerAngles.y)), 0.0f, Input.GetAxisRaw("Vertical") * (Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y))).normalized;
-        moveTowardsX = new Vector3(Input.GetAxisRaw("Horizontal") * (Mathf.Sin(Mathf.Deg2Rad * transform.eulerAngles.y + Mathf.PI / 2)), 0.0f, Input.GetAxisRaw("Horizontal") * (Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y + Mathf.PI / 2))).normalized;
+        if (!recallAbility.GetLockMovementInput)
+        {
+            moveTowardsZ = new Vector3(Input.GetAxisRaw("Vertical") * (Mathf.Sin(Mathf.Deg2Rad * transform.eulerAngles.y)), 0.0f, Input.GetAxisRaw("Vertical") * (Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y))).normalized;
+            moveTowardsX = new Vector3(Input.GetAxisRaw("Horizontal") * (Mathf.Sin(Mathf.Deg2Rad * transform.eulerAngles.y + Mathf.PI / 2)), 0.0f, Input.GetAxisRaw("Horizontal") * (Mathf.Cos(Mathf.Deg2Rad * transform.eulerAngles.y + Mathf.PI / 2))).normalized;
 
-        rb.MovePosition(transform.position + ((moveTowardsZ + moveTowardsX)).normalized * speed);
+            rb.MovePosition(transform.position + ((moveTowardsZ + moveTowardsX)).normalized * speed);
+        }
     }
 
     private void HandleJumping()
@@ -120,14 +128,23 @@ public class TestScript : MonoBehaviour
 
         mouseY = Mathf.Clamp(mouseY, -90.0f, 90.0f);
 
-        playerCamera.transform.localRotation = Quaternion.Euler(-mouseY, 0.0f, 0.0f);
-        transform.rotation = Quaternion.Euler(0.0f, mouseX, 0.0f);
+        if (!recallAbility.GetLockLookInput)
+        {
+            playerCamera.transform.localRotation = Quaternion.Euler(-mouseY, 0.0f, 0.0f);
+            transform.rotation = Quaternion.Euler(0.0f, mouseX, 0.0f);
+        }
     }
 
     public bool IsGrounded
     {
         get => isGrounded;
         set => isGrounded = value;
+    }
+
+    public float GetMouseX
+    {
+        get => mouseX;
+        set => mouseX = value;
     }
 
     public Rigidbody Rb
